@@ -23,19 +23,30 @@ const Import: React.FC = () => {
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
+    const data = new FormData();
 
-    // TODO
+    if (uploadedFiles.length <= 0) return;
+
+    data.append('file', uploadedFiles[0].file, uploadedFiles[0].file.name);
 
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data);
+
+      history.push('/');
     } catch (err) {
-      // console.log(err.response.error);
+      console.log(err.response.error);
     }
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    const formattedFiles = files.map(file => ({
+      file,
+      name: file.name,
+      readableSize: `${file.size}`,
+    }));
+    // Se o file importado tiver o mesmo nome e o mesmo tamanho, informe um error
+    // de arquivo duplicado.
+    setUploadedFiles([...uploadedFiles, ...formattedFiles]);
   }
 
   return (
